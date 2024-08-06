@@ -1,5 +1,41 @@
 function findTitlesPublishedOn(date, blogPostTitles) {
-  //It should return all blog posts titles that were published on a specified date using binary search
+  const targetDate = new Date(date).toISOString().split("T")[0];
+
+  let left = 0;
+  let right = blogPostTitles.length - 1;
+  let firstIndex = -1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midDate = new Date(blogPostTitles[mid].published_on)
+      .toISOString()
+      .split("T")[0];
+
+    if (midDate === targetDate) {
+      firstIndex = mid;
+      right = mid - 1;
+    } else if (midDate < targetDate) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  const result = [];
+  if (firstIndex !== -1) {
+    for (let i = firstIndex; i < blogPostTitles.length; i++) {
+      const currentDate = new Date(blogPostTitles[i].published_on)
+        .toISOString()
+        .split("T")[0];
+      if (currentDate === targetDate) {
+        result.push(blogPostTitles[i].title);
+      } else {
+        break;
+      }
+    }
+  }
+
+  return result;
 }
 
 const blogPostTitles = [
@@ -191,3 +227,7 @@ const blogPostTitles = [
     published_on: "2026-12-01T12:00:00Z",
   },
 ];
+
+// Example usage
+const date = "2023-04-20";
+console.log(findTitlesPublishedOn(date, blogPostTitles));
